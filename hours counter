@@ -1,0 +1,66 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    11:53:32 09/27/2021 
+-- Design Name: 
+-- Module Name:    hours_counter - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_unsigned.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity hours_counter is
+	port(
+		clk_mins, count : in std_logic;
+		cnt_0, cnt_1 : out std_logic_vector(3 downto 0)
+	);
+end hours_counter;
+
+architecture Behavioral of hours_counter is
+	signal cnt_sig0 : std_logic_vector(3 downto 0) := "0000";
+	signal cnt_sig1 : std_logic_vector(3 downto 0) := "0000";
+	signal nul : std_logic_vector(3 downto 0);
+begin
+	nul <= "0000";
+	
+	cnt_proc: process(clk_mins)
+					begin
+						if(rising_edge(clk_mins)) then
+							if(count = '1') then 
+								cnt_sig0 <= cnt_sig0 +1;
+								if(cnt_sig0 = "1010")then
+									cnt_sig1 <= nul + 1;
+									cnt_sig0 <= "0000";
+									cnt_0 <= cnt_sig0;
+									if(cnt_sig1 = "0110")then
+										cnt_1 <= cnt_sig1;
+										cnt_sig1 <= "0000";
+										
+									end if;
+								end if;
+							end if;
+						end if;
+					end process; 
+
+end Behavioral;
