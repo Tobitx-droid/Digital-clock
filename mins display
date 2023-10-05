@@ -1,0 +1,114 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    11:24:42 10/04/2021 
+-- Design Name: 
+-- Module Name:    minsDisplay - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+entity minsDisplay is
+	port(
+		in0, in1 : in std_logic_vector(3 downto 0);
+		segDisp: out std_logic_vector(6 downto 0);
+		anodeOut : out std_logic_vector(1 downto 0)
+	);
+end minsDisplay;
+
+architecture Behavioral of minsDisplay is
+
+	component clk_div
+		port(
+			clk_100m : in std_logic;
+			clk_1 : out std_logic
+			
+			);
+		end component;
+	
+	component mux4
+		port(
+			A,B : in std_logic_vector(3 downto 0);
+			mux_sel : in std_logic;
+			mux_out : out std_logic_vector(3 downto 0)
+			);
+		end component;
+	
+	component x2_counter 
+		port(
+			clk_250, count : in std_logic;
+			cnt : out std_logic
+			);
+		end component;
+	
+	component sevenSegment
+		port(
+			A,B,C,D: in std_logic;
+			Sa,Sb,Sc,Sd,Se,Sf,Sg: out std_logic
+			);
+		end component;
+		
+		signal CntInSig, CntOutSig : std_logic;
+		signal muxOutSig : std_logic_vector(3 downto 0);
+
+begin 
+	DisClk : displayClk 
+		port map(
+			clk_100m => clk,
+			clk_250 => CntInSig
+		);
+		
+	BitCnt : x2_counter 
+		port map(
+			clk_250 => CntInSig,
+			count => '1',
+			cnt => CntOutSig
+		);
+		
+	anode <= not(CntOutSig);
+	
+	inMux : mux4
+		port map(
+			A => in0,
+			B => in1,
+			mux_sel => CntOutSig,
+		mux_out => muxOutSig
+		);
+	
+	sevenSegDis : sevenSegment 
+		port map(
+			A   => muxOutSig(0),
+			B   => muxOutSig(1),
+			C   => muxOutSig(2),
+			D   => muxOutSig(3),
+			Sa  => segDisp(0),
+			Sb  => segDisp(1),
+			Sc  => segDisp(2),
+			Sd  => segDisp(3),
+			Se  => segDisp(4),
+			Sf  => segDisp(5),
+			Sg  => segDisp(6)
+		);
+
+end Behavioral;
