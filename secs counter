@@ -1,0 +1,64 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    17:56:17 09/30/2021 
+-- Design Name: 
+-- Module Name:    secs_counter - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_unsigned.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;
+--use UNISIM.VComponents.all;
+
+
+entity secs_counter is
+	port(
+		clk_1, count : in std_logic;
+		cnt : out std_logic_vector(5 downto 0)
+	);
+end secs_counter;
+
+architecture Behavioral of secs_counter is
+	signal cnt_sig : std_logic_vector(5 downto 0) := "000000";
+	signal nul,nal : std_logic_vector(5 downto 0);
+begin
+	nul <= "000000";
+	nal <= "000000";
+	cnt_proc: process(clk_1)
+					begin
+						if(rising_edge(clk_1)) then
+							if(count = '1') then 
+								cnt_sig <= cnt_sig +1;
+								if(cnt_sig = "111100")then
+									nal <= nul + 1;
+									cnt <= nal; 
+									cnt_sig <= "000000";
+									if(nal = "111100" )then
+										cnt <= "000000";
+									end if;
+								end if;
+							end if;
+						end if;
+					end process; 
+
+end Behavioral;
